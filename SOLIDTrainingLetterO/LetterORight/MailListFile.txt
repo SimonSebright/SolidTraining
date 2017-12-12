@@ -1,0 +1,3 @@
+﻿urs.ruettli@example.com
+andrea.schmidli@example1.com
+reto.haemmerli@example2.com
