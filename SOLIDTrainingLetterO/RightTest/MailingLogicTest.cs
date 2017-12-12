@@ -18,8 +18,9 @@ namespace RightTest
             int count = 0;
 
             MailingLogic.Process(emailAddresses,
-                (em) => true,
-                (em) => { count++; });
+                (em) => true, 
+                em => em,
+                (em,cnt) => { count++; });
 
             count.Should().Be(2);
         }
@@ -32,7 +33,8 @@ namespace RightTest
 
             MailingLogic.Process(emailAddresses,
                 (em) => { return em != "rubbish"; },
-                (em) => { count++; });
+                em => em,
+                (em,cnt) => { count++; });
 
             count.Should().Be(1);
         }
@@ -49,27 +51,48 @@ namespace RightTest
         }
 
         [Fact]
-        public void Line_based_address_reader()
+        public void We_can_read_email_addresses_as_lines_from_stream()
         {
-            var contents = 
-@"a@b.com
+            var contents =
+                @"a@b.com
 b@c.com";
             using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(contents)))
             {
-                MailingLogic.LineBasedEmailAddresses(ms).ShouldBeEquivalentTo(new string[] {"a@b.com", "b@c.com"});
+                MailingLogic.LineBasedEmailAddresses(ms).ShouldBeEquivalentTo(new string[] { "a@b.com", "b@c.com" });
+            }
+        }
+
+        [Fact]
+        public void Putting_it_together()
+        {
+            var contents =
+                @"bla bla 
+
+a@b.com
+b@c.com
+
+
+oops new lines there";
+            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(contents)))
+            {
+                MailingLogic.Process(MailingLogic.LineBasedEmailAddresses(ms), 
+                    MailingLogic.IsValidEmailAddress,
+                    MailingLogic.GetContentFor,
+                    MailingLogic.SendItReally);
+
             }
         }
     }
 
     public static class MailingLogic
     {
-        public static void Process(IEnumerable<string> emailAddresses, Func<string, bool> validator,
-            Action<string> target)
+        public static void Process(IEnumerable<string> emailAddresses, Func<string, bool> validator, Func<string, string> emailContent,
+            Action<string, string> target)
         {
             var validAddresses = emailAddresses.Where(validator);
             foreach (var validAddress in validAddresses)
             {
-                target(validAddress);
+                target(validAddress, emailContent(validAddress));
             }
         }
 
@@ -88,6 +111,16 @@ b@c.com";
                     yield return sr.ReadLine();
                 }
             }
+        }
+
+        public static string GetContentFor(string emailAddress)
+        {
+            return $"Hi, person who's email address is {emailAddress}";
+        }
+
+        public static void SendItReally(string emailAddress, string content)
+        {
+            // do it as per real code
         }
     }
 }
