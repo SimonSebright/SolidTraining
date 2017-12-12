@@ -6,7 +6,7 @@ using Xunit;
 
 namespace RightTest
 {
-    public class UnitTest1
+    public class MailingLogicTest
     {
         [Fact]
         public void Email_address_is_validated()
