@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace LetterORight
 {
-    internal static class Program
+    public static class Program
     {
-        internal static void Main(string[] args)
+        public static void Main(string[] args)
         {
             try
             {
