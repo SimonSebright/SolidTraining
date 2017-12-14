@@ -18,7 +18,11 @@ namespace LetterLRight
         public int SideLength
         {
             get => _sideLength;
-            set => _sideLength = value;
+            set
+            {
+                Console.WriteLine($"Updating {nameof(SideLength)} to {value}.");
+                _sideLength = value;
+            }
         }
         public int Width
         {
@@ -32,7 +36,12 @@ namespace LetterLRight
 
         public override int CalculateArea()
         {
-            return _sideLength * _sideLength;
+            return RectangleHandler.CalculateArea(_sideLength, _sideLength);
+        }
+
+        public override void Draw()
+        {
+            RectangleHandler.Draw(_sideLength, _sideLength);
         }
     }
 }

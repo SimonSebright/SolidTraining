@@ -40,7 +40,12 @@ namespace LetterLRight
 
         public override int CalculateArea()
         {
-            return _height * _width;
+            return RectangleHandler.CalculateArea(_height, _width);
+        }
+
+        public override void Draw()
+        {
+            RectangleHandler.Draw(_width, _height);
         }
     }
 }
